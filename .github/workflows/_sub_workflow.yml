@@ -1,0 +1,35 @@
+name: "[SUB] Sub Workflow"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    secrets:
+      secret_to_pass:
+        required: true
+      actions_secret:
+        required: true
+    inputs:
+      environment_variable:
+        required: true
+        type: string
+
+jobs:
+  show-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: show secrets
+        env:
+          SECRET_WF_INTERNAL: ${{ secrets.secret_to_pass }}
+          SECRET_REPO_INTERNAL: ${{ secrets.actions_secret }}
+          ENVIRONMENT_VARIABLE: ${{ inputs.environment_variable }}
+        id: show-secrets
+        run: |
+          echo "Secret to pass based on outer env var: ${secret_to_pass}"
+          echo "Secret to not pass based on outer env var: ${secret_to_not_pass}"
+          echo "Actions repo secret: ${ACTIONS_REPO_SECRET}"
+          echo "Secret passed in: ${SECRET_WF_INTERNAL}"
+          echo "Repo secret defined in step: ${SECRET_REPO_INTERNAL}"
+          echo "Standard env var: ${ENVIRONMENT_VARIABLE}"

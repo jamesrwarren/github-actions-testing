@@ -1,0 +1,81 @@
+name: "[Workflow] Example Secret Scoping"
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: write
+  security-events: write
+  pull-requests: write
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
+
+jobs:
+  secret_scoping:
+    runs-on: ubuntu-latest
+    name: create and output env vars
+    outputs:
+      secret_to_pass: ${{ steps.secrets.outputs.secret_to_pass }}
+    steps:
+      - uses: actions/checkout@3b9b8c884f6b4bb4d5be2779c26374abadae0871 # pin@v3
+      - name: create some secret env variables
+        id: secrets
+        run: |
+          echo "secret_to_pass="secret_to_pass" >> $GITHUB_OUTPUT
+          echo "secret_to_not_pass="secret_to_not_pass" >> $GITHUB_OUTPUT
+      - name: echo out secrets
+        run: |
+          echo ${secret_to_pass}
+          echo ${secret_to_not_pass}
+          echo ${ACTIONS_REPO_SECRET}
+
+  same_workflow_scoping:
+    runs-on: ubuntu-latest
+    name: show env vars in same workflow
+    env:
+      secret_to_pass: ${{ needs.secret_scoping.outputs.secret_to_pass }}
+    needs:
+      - secret_scoping
+    steps:
+      - name: echo out secrets
+        run: |
+          echo ${secret_to_pass}
+          echo ${secret_to_not_pass}
+          echo ${ACTIONS_REPO_SECRET}
+
+  run_sub_workflow_with_inherit:
+    name: build web resources
+    needs:
+      - secret_scoping
+    uses: ./.github/workflows/_sub_workflow.yml
+    with:
+      environment_variable: "environment_variable"
+    secrets: inherit
+
+  run_sub_workflow_without_inherit:
+    name: build web resources
+    needs:
+      - secret_scoping
+    uses: ./.github/workflows/_sub_workflow.yml
+    with:
+      environment_variable: "environment_variable"
+    secrets:
+      secret_to_pass: ${{ needs.secret_scoping.outputs.secret_to_pass }}
+      actions_secret: ${{ secrets.actions_secret }}
+
+
