@@ -8,15 +8,9 @@ on:
   workflow_call:
     secrets:
       secret_to_pass:
-<<<<<<< HEAD
         required: true
       actions_secret:
         required: true
-=======
-        required: false
-      actions_secret:
-        required: false
->>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
     inputs:
       environment_variable:
         required: true
@@ -31,22 +25,17 @@ jobs:
           SECRET_WF_INTERNAL: ${{ secrets.secret_to_pass }}
           SECRET_REPO_INTERNAL: ${{ secrets.actions_secret }}
           ENVIRONMENT_VARIABLE: ${{ inputs.environment_variable }}
-<<<<<<< HEAD
         id: show-secrets
-=======
->>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
         run: |
           echo "Secret to pass based on outer env var: ${secret_to_pass}"
           echo "Secret to not pass based on outer env var: ${secret_to_not_pass}"
           echo "Actions repo secret: ${ACTIONS_REPO_SECRET}"
           echo "Secret passed in: ${SECRET_WF_INTERNAL}"
-<<<<<<< HEAD
           echo "Repo secret defined in step: ${SECRET_REPO_INTERNAL}"
           echo "Standard env var: ${ENVIRONMENT_VARIABLE}"
-=======
           echo "Secret defined in step: ${SECRET_REPO_INTERNAL}"
           echo "Standard env var: ${ENVIRONMENT_VARIABLE}"
           echo "Secret as env var in github env file: ${secret_to_env_file}"
       - name: list all secrets
         run: awk 'BEGIN{for(v in ENVIRON) print v}'
->>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
+
