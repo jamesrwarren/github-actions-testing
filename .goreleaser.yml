@@ -1,4 +1,6 @@
 # Make sure to check the documentation at http://goreleaser.com
+version: 2
+
 project_name: opg-ecs-helper
 
 release:
