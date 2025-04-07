@@ -25,6 +25,12 @@ permissions:
   repository-projects: none
   statuses: none
 
+<<<<<<< HEAD
+=======
+env:
+  workflow_variable: "workflow_variable"
+
+>>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
 jobs:
   secret_scoping:
     runs-on: ubuntu-latest
@@ -36,6 +42,7 @@ jobs:
       - name: create some secret env variables
         id: secrets
         run: |
+<<<<<<< HEAD
           echo "secret_to_pass="secret_to_pass" >> $GITHUB_OUTPUT
           echo "secret_to_not_pass="secret_to_not_pass" >> $GITHUB_OUTPUT
       - name: echo out secrets
@@ -43,6 +50,20 @@ jobs:
           echo ${secret_to_pass}
           echo ${secret_to_not_pass}
           echo ${ACTIONS_REPO_SECRET}
+=======
+          echo "secret_to_pass=secret_to_pass" >> $GITHUB_OUTPUT
+          echo "secret_to_not_pass=secret_to_not_pass" >> $GITHUB_OUTPUT
+          export secret_as_env_var_direct=secret_as_env_var_direct
+          echo "secret_to_env_file=secret_to_env_file" >> $GITHUB_ENV
+          echo "Secret as env var direct: ${secret_as_env_var_direct}"
+      - name: echo out secrets
+        run: |
+          echo "Secret to pass: ${secret_to_pass}"
+          echo "Secret not to pass: ${secret_to_not_pass}"
+          echo "Secret from the repo: ${{ secrets.ACTIONS_REPO_SECRET }}"
+          echo "Secret as env var direct: ${secret_as_env_var_direct}"
+          echo "Secret as env var in github env file: ${secret_to_env_file}"
+>>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
 
   same_workflow_scoping:
     runs-on: ubuntu-latest
@@ -52,11 +73,25 @@ jobs:
     needs:
       - secret_scoping
     steps:
+<<<<<<< HEAD
       - name: echo out secrets
         run: |
           echo ${secret_to_pass}
           echo ${secret_to_not_pass}
           echo ${ACTIONS_REPO_SECRET}
+=======
+      - uses: actions/checkout@3b9b8c884f6b4bb4d5be2779c26374abadae0871
+      - name: echo out secrets
+        run: |
+          echo "Secret to pass: ${secret_to_pass}"
+          echo "Secret not to pass: ${secret_to_not_pass}"
+          echo "Secret from the repo: ${{ secrets.ACTIONS_REPO_SECRET }}"
+          echo "Secret as env var direct: ${secret_as_env_var_direct}"
+          echo "Secret as env var in github env file: ${secret_to_env_file}"
+          echo "Workflow variable: ${workflow_variable}"
+      - name: list all secrets
+        run: awk 'BEGIN{for(v in ENVIRON) print v}'
+>>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
 
   run_sub_workflow_with_inherit:
     name: build web resources
@@ -76,6 +111,10 @@ jobs:
       environment_variable: "environment_variable"
     secrets:
       secret_to_pass: ${{ needs.secret_scoping.outputs.secret_to_pass }}
+<<<<<<< HEAD
       actions_secret: ${{ secrets.actions_secret }}
+=======
+      actions_secret: ${{ secrets.ACTIONS_REPO_SECRET }}
+>>>>>>> 66b28ebeae61e880a394768ee614fb3894cdb87f
 
 
