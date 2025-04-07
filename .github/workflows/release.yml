@@ -2,7 +2,7 @@ name: Release with goreleaser
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
         uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@73bfe6f3ea05ffbc3dd278fe29c113ec1e7dcefc # v3.1.1
         with:
           prerelease: false
-          release_branch: master
+          release_branch: main
           default_bump: "minor"
 
       - name: Extract branch name
